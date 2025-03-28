@@ -2,6 +2,8 @@ package com.expenses.tracker.contoller;
 
 import com.expenses.tracker.entity.Expense;
 import com.expenses.tracker.service.ExpenseService;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +17,11 @@ public class ExpenseController {
     public ExpenseController(ExpenseService expenseService) {
         this.expenseService = expenseService;
     }
-
+    
+    @CrossOrigin(origins = "http://localhost:5174")
     @PostMapping("/add")
     public Expense addExpense(@RequestBody Expense expense) {
+    	System.out.println("Received Expense Date: " + expense.getDate());
         return expenseService.addExpense(expense);
     }
 
