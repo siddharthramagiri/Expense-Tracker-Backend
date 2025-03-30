@@ -50,4 +50,8 @@ public class ExpenseService {
         List<Expense> expenses = user.getExpenses();
         return ResponseEntity.ok(expenses);
     }
+
+    public void deleteExpense(Long id){
+        expenseRepository.deleteById(id);
+    }
 }
