@@ -1,5 +1,6 @@
 package com.expenses.tracker.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +24,8 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+    @Value("${frontend.url}")
+    String frontendUrl;
 
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -34,7 +37,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Add your frontend URL
+        configuration.setAllowedOrigins(Arrays.asList(frontendUrl)); // Add your frontend URL
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

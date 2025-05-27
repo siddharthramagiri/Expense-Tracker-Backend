@@ -3,10 +3,12 @@ package com.expenses.tracker.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @Entity
+@Table(name = "app_user")
 public class User {
 
     @Id
@@ -15,6 +17,7 @@ public class User {
     private String email;
     private String password;
     private String username;
+    private LocalDate createdAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Expense> expenses;
@@ -71,5 +74,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 }

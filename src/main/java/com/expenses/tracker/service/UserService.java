@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -39,11 +40,16 @@ public class UserService {
         if(!Objects.isNull(u)) {
             return new ResponseEntity<>("User with " + user.getEmail() + " already Existed", HttpStatus.NOT_FOUND);
         }
+        user.setCreatedAt(LocalDate.now());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return new ResponseEntity<>(userRepository.save(user), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
     }
 
     public ResponseEntity<Object> login(User user) {
+        User u = userRepository.findByEmail(user.getEmail());
+        if(Objects.isNull(u)) {
+            return new ResponseEntity<>("Failed to login! \nUser and password doesnt match", HttpStatus.FOUND);
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         user.getEmail(),
@@ -58,7 +64,7 @@ public class UserService {
 
             return ResponseEntity.ok(response);
         }
-        return new ResponseEntity<>("FAILED", HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>("Failed to login", HttpStatus.NOT_FOUND);
     }
 
     public User profile() {
