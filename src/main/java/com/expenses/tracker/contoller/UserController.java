@@ -2,6 +2,7 @@ package com.expenses.tracker.contoller;
 
 import com.expenses.tracker.entity.User;
 import com.expenses.tracker.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,5 +28,10 @@ public class UserController {
     @GetMapping("/profile")
     public User profile() {
         return userService.profile();
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<Void> helpController() {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
