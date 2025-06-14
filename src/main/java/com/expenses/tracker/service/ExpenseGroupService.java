@@ -24,28 +24,39 @@ public class ExpenseGroupService {
     private final ExpenseGroupRepository groupRepository;
     private final GroupExpenseRepository groupExpenseRepository;
     private final ExpenseRepository expenseRepository;
-    private final ExpenseGroupRepository expenseGroupRepository;
+    private final InvitationService invitationService;
 
-    public ExpenseGroupService(UserRepository userRepository, ExpenseGroupRepository groupRepository, GroupExpenseRepository groupExpenseRepository, ExpenseRepository expenseRepository, ExpenseGroupRepository expenseGroupRepository) {
+    public ExpenseGroupService(UserRepository userRepository, ExpenseGroupRepository groupRepository, GroupExpenseRepository groupExpenseRepository,
+                               ExpenseRepository expenseRepository, InvitationService invitationService) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.groupExpenseRepository = groupExpenseRepository;
         this.expenseRepository = expenseRepository;
-        this.expenseGroupRepository = expenseGroupRepository;
+        this.invitationService = invitationService;
     }
 
     public ExpenseGroup createGroup(CreateGroupRequest req) {
         User creator = userRepository.findById(req.createdByUserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<User> members = new ArrayList<>(userRepository.findAllById(req.memberIds));
+        List<User> members = new ArrayList<>();
         members.add(creator);
+
         ExpenseGroup group = new ExpenseGroup();
         group.setName(req.groupName);
         group.setCreatedBy(creator);
         group.setMembers(members);
+        groupRepository.save(group);
 
-        return groupRepository.save(group);
+        for(User member : userRepository.findAllById(req.memberIds)) {
+            Optional<User> user = userRepository.findById(member.getId());
+            if(user.isEmpty()) {
+                throw new RuntimeException("User Doesn't Exists");
+            }
+            invitationService.sendGroupInvitation(group.getId(), user.get().getEmail());
+        }
+
+        return group;
     }
 
     @Transactional

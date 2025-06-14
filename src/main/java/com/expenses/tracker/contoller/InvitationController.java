@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/groups/invite")
+@RequestMapping("/api/group/invite")
 public class InvitationController {
 
     private final InvitationService invitationService;

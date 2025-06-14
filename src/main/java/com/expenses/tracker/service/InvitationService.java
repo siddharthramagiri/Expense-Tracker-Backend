@@ -10,6 +10,7 @@ import com.expenses.tracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -26,10 +27,12 @@ public class InvitationService {
     private final GroupInvitationRepository groupInvitationRepository;
     private final ExpenseGroupRepository groupRepository;
     private final UserRepository userRepository;
-    public InvitationService(GroupInvitationRepository groupInvitationRepository, ExpenseGroupRepository groupRepository, UserRepository userRepository) {
+    private final JavaMailSender mailSender;
+    public InvitationService(GroupInvitationRepository groupInvitationRepository, ExpenseGroupRepository groupRepository, UserRepository userRepository, JavaMailSender mailSender) {
         this.groupInvitationRepository = groupInvitationRepository;
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
+        this.mailSender = mailSender;
     }
 
     public void sendGroupInvitation(Long groupId, String invitedUserEmail) {
@@ -46,7 +49,7 @@ public class InvitationService {
 
         groupInvitationRepository.save(invitation);
 
-        String confirmationLink = domain + "/api/group/confirm-invitation?token=" + token;
+        String confirmationLink = domain + "/api/group/invite/confirm-invitation?token=" + token;
 
         String subject = "Group Invitation: " + group.getName();
         String body = "You have been invited to join the group \"" + group.getName() + "\".\n"
@@ -56,7 +59,7 @@ public class InvitationService {
         message.setTo(invitedUser.getEmail());
         message.setSubject(subject);
         message.setText(body);
-//        mailSender.send(message);
+        mailSender.send(message);
     }
 
 
