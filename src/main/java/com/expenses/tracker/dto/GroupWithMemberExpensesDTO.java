@@ -6,7 +6,16 @@ import java.util.List;
 public class GroupWithMemberExpensesDTO {
     private Long groupId;
     private String groupName;
+    private Long createdById;
     private List<MemberExpenseDTO> memberExpenses;
+
+    public Long getCreatedById() {
+        return createdById;
+    }
+
+    public void setCreatedById(Long createdById) {
+        this.createdById = createdById;
+    }
 
     public Long getGroupId() {
         return groupId;

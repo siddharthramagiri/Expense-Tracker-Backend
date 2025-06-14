@@ -113,6 +113,7 @@ public class ExpenseGroupService {
             GroupWithMemberExpensesDTO dto = new GroupWithMemberExpensesDTO();
             dto.setGroupId(group.getId());
             dto.setGroupName(group.getName());
+            dto.setCreatedById(group.getCreatedBy().getId());
 
             List<MemberExpenseDTO> memberExpenses = new ArrayList<>();
 

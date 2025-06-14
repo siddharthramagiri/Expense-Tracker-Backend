@@ -3,6 +3,7 @@ spring:
     url: jdbc:${DATASOURCE_URL}
     username: ${DATASOURCE_USER}
     password: ${DATASOURCE_PASSWORD}
+
 # add your own username and password and db name
   jpa:
     hibernate:
