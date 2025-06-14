@@ -25,21 +25,14 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Expense> expenses;
 
-    // Groups this user created
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<ExpenseGroup> createdGroups;
 
-    // Groups this user is a member of
     @ManyToMany(mappedBy = "members")
     @JsonIgnore
     private List<ExpenseGroup> groups;
 
-    // Group expenses this user paid
-    //    @OneToMany(mappedBy = "paidBy")
-    //    private List<GroupExpense> paidExpenses;
-
-    // Splits assigned to this user
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<ExpenseSplit> splits;

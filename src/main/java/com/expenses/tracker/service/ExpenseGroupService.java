@@ -45,8 +45,6 @@ public class ExpenseGroupService {
         group.setCreatedBy(creator);
         group.setMembers(members);
 
-//        System.out.println(group.getName());
-
         return groupRepository.save(group);
     }
 
@@ -98,6 +96,15 @@ public class ExpenseGroupService {
 
     public List<GroupWithMemberExpensesDTO> getGroupsWithMemberExpenses(Long userId) {
         // Step 1: Fetch all groups the user is a member of
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(!authentication.isAuthenticated()) {
+            throw new RuntimeException("Not Authenticated");
+        }
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email);
+        if(!user.getId().equals(userId)) {
+            throw new RuntimeException("User Id Doesn't Match with the current Session's user");
+        }
         List<ExpenseGroup> groups = groupRepository.findByMembers_Id(userId);
 
         List<GroupWithMemberExpensesDTO> result = new ArrayList<>();

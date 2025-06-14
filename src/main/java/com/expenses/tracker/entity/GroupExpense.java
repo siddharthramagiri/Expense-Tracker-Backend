@@ -21,10 +21,6 @@ public class GroupExpense {
     private String description;
     private BigDecimal amount;
 
-//    @ManyToOne
-//    @JoinColumn(name = "paid_by_user_id")
-//    private User paidBy;
-
     @ManyToOne
     @JoinColumn(name = "group_id")
     private ExpenseGroup group;

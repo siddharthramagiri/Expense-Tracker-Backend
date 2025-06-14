@@ -12,7 +12,6 @@ public class AddGroupExpenseRequest {
     public BigDecimal amount;
     public LocalDateTime date;
     public String category;
-//    public Long paidByUserId;
     public Map<Long, BigDecimal> splitMap; // userId -> amount
 
     public String getCategory() {

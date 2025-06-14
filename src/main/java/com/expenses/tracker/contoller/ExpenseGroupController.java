@@ -4,7 +4,6 @@ import com.expenses.tracker.dto.AddGroupExpenseRequest;
 import com.expenses.tracker.dto.CreateGroupRequest;
 import com.expenses.tracker.dto.GroupWithMemberExpensesDTO;
 import com.expenses.tracker.entity.ExpenseGroup;
-import com.expenses.tracker.entity.GroupExpense;
 import com.expenses.tracker.service.ExpenseGroupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
