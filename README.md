@@ -1,3 +1,3 @@
 ### Entity Relations
 
-<img src="Entity_Relations.png">
+<img src="Entity_relation.png">
