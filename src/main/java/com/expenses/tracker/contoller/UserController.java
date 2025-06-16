@@ -1,10 +1,13 @@
 package com.expenses.tracker.contoller;
 
+import com.expenses.tracker.dto.UserDTO;
 import com.expenses.tracker.entity.User;
 import com.expenses.tracker.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping
 @RestController
@@ -33,5 +36,10 @@ public class UserController {
     @GetMapping("/")
     public ResponseEntity<Void> helpController() {
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/allUsers")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.expenses.tracker.service;
 
+import com.expenses.tracker.dto.UserDTO;
 import com.expenses.tracker.entity.User;
 import com.expenses.tracker.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -8,13 +9,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -77,5 +77,24 @@ public class UserService {
             return userRepository.findByEmail(email);
         }
         return null;
+    }
+
+    public List<UserDTO> getAllUsers() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(!authentication.isAuthenticated()) {
+            throw new RuntimeException("UnAuthorized User");
+        }
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email);
+        List<User> allUsers = userRepository.findAllUsersExceptOne(user.getId());
+        List<UserDTO> result = new ArrayList<>();
+
+        for(User u : allUsers) {
+            UserDTO userDTO = new UserDTO(u.getId(), u.getUsername(), u.getEmail());
+            result.add(userDTO);
+        }
+
+        return result;
     }
 }
