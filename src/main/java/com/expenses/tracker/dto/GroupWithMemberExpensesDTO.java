@@ -1,43 +1,19 @@
 package com.expenses.tracker.dto;
 
 
+import lombok.*;
+
 import java.util.List;
 
+@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class GroupWithMemberExpensesDTO {
     private Long groupId;
     private String groupName;
     private Long createdById;
     private List<MemberExpenseDTO> memberExpenses;
 
-    public Long getCreatedById() {
-        return createdById;
-    }
-
-    public void setCreatedById(Long createdById) {
-        this.createdById = createdById;
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public List<MemberExpenseDTO> getMemberExpenses() {
-        return memberExpenses;
-    }
-
-    public void setMemberExpenses(List<MemberExpenseDTO> memberExpenses) {
-        this.memberExpenses = memberExpenses;
-    }
 }

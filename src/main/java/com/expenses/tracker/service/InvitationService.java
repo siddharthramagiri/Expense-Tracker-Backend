@@ -1,6 +1,7 @@
 package com.expenses.tracker.service;
 
 
+import com.expenses.tracker.dto.GroupInvitationsDTO;
 import com.expenses.tracker.entity.ExpenseGroup;
 import com.expenses.tracker.entity.GroupInvitation;
 import com.expenses.tracker.entity.User;
@@ -8,14 +9,17 @@ import com.expenses.tracker.repository.ExpenseGroupRepository;
 import com.expenses.tracker.repository.GroupInvitationRepository;
 import com.expenses.tracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class InvitationService {
@@ -83,4 +87,58 @@ public class InvitationService {
         return ResponseEntity.ok("Successfully joined group: " + group.getName());
     }
 
+    public ResponseEntity<List<GroupInvitationsDTO>> getAllInvitations() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if(!authentication.isAuthenticated()) {
+                throw new RuntimeException("Not Authenticated");
+            }
+            String email = authentication.getName();
+            User user = userRepository.findByEmail(email);
+            List<GroupInvitation> invitations = groupInvitationRepository.findByInvitedUser_Id(user.getId());
+            List<GroupInvitationsDTO> groupInvitationsDTOList = new ArrayList<>();
+            for(GroupInvitation invitation : invitations) {
+                GroupInvitationsDTO groupInvitation = getGroupInvitationsDTO(invitation);
+                groupInvitationsDTOList.add(groupInvitation);
+            }
+            return new ResponseEntity<>(groupInvitationsDTOList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private static GroupInvitationsDTO getGroupInvitationsDTO(GroupInvitation invitation) {
+        Long id = invitation.getId();
+        String token = invitation.getToken();
+        String groupName = invitation.getGroup().getName();
+        boolean isAccepted = invitation.isAccepted();
+
+        User createdByUser = invitation.getGroup().getCreatedBy();
+        String createdBy = createdByUser.getUsername();
+        String createdByEmail = createdByUser.getEmail();
+        LocalDateTime invitedAt = invitation.getCreatedAt();
+        return new GroupInvitationsDTO(id, token, groupName, createdBy, createdByEmail, isAccepted, invitedAt);
+    }
+
+    public ResponseEntity<String> declineInvitation(Long invitationId) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if(!authentication.isAuthenticated()) {
+                throw new RuntimeException("Not Authenticated");
+            }
+            String email = authentication.getName();
+            User user = userRepository.findByEmail(email);
+            Optional<GroupInvitation> groupInvitation = groupInvitationRepository.findById(invitationId);
+            if(groupInvitation.isEmpty()) {
+                throw new RuntimeException("No Invitation Found");
+            }
+            if(!Objects.equals(groupInvitation.get().getInvitedUser().getId(), user.getId())) {
+                throw new RuntimeException("Error Deleting the invitation of another user");
+            }
+            groupInvitationRepository.deleteById(invitationId);
+            return new ResponseEntity<>("Invitation Declined", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

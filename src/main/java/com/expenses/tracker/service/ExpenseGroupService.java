@@ -38,14 +38,14 @@ public class ExpenseGroupService {
     }
 
     public ExpenseGroup createGroup(CreateGroupRequest req) {
-        User creator = userRepository.findById(req.createdByUserId)
+        User creator = userRepository.findById(req.getCreatedByUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<User> members = new ArrayList<>();
         members.add(creator);
 
         ExpenseGroup group = new ExpenseGroup();
-        group.setName(req.groupName);
+        group.setName(req.getGroupName());
         group.setCreatedBy(creator);
         group.setMembers(members);
         groupRepository.save(group);
@@ -57,7 +57,7 @@ public class ExpenseGroupService {
 //            }
 //            invitationService.sendGroupInvitation(group.getId(), user.get().getEmail());
 //        }
-        for(String email : req.memberEmails){
+        for(String email : req.getMemberEmails()){
             User user = userRepository.findByEmail(email);
             if(Objects.isNull(user)){
                 throw new RuntimeException("User does not exist");
@@ -179,7 +179,8 @@ public class ExpenseGroupService {
             }
 
             List<Expense> groupExpenses = expenseRepository.findByGroup_Id(groupId);
-            List<GroupInvitation> invitations = groupInvitationRepository.findByGroupId(groupId);            expenseRepository.deleteAll(groupExpenses);
+            List<GroupInvitation> invitations = groupInvitationRepository.findByGroupId(groupId);
+            expenseRepository.deleteAll(groupExpenses);
             groupInvitationRepository.deleteAll(invitations);
             groupRepository.deleteById(groupId);
 

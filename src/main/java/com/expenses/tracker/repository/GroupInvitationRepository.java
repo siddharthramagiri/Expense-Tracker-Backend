@@ -12,4 +12,6 @@ public interface GroupInvitationRepository extends JpaRepository<GroupInvitation
 
     Optional<GroupInvitation> findByToken(String token);
     List<GroupInvitation> findByGroupId(Long groupId);
+    List<GroupInvitation> findByInvitedUser_Id(Long id);
+    void deleteById(Long id);
 }

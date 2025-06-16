@@ -1,10 +1,17 @@
 package com.expenses.tracker.dto;
 
+import lombok.*;
+
 import java.util.List;
 
+@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class CreateGroupRequest {
-    public String groupName;
-    public Long createdByUserId;
+    private String groupName;
+    private Long createdByUserId;
 //    public List<Long> memberIds;
-    public List<String> memberEmails;
+    private List<String> memberEmails;
 }
