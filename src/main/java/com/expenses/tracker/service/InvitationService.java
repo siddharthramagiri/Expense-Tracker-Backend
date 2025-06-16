@@ -53,7 +53,7 @@ public class InvitationService {
 
         groupInvitationRepository.save(invitation);
 
-        String confirmationLink = domain + "/api/group/invite/confirm-invitation?token=" + token;
+        String confirmationLink = frontendUrl + "/groups/invites";
 
         String subject = "Group Invitation: " + group.getName();
         String body = "You have been invited to join the group \"" + group.getName() + "\".\n"
