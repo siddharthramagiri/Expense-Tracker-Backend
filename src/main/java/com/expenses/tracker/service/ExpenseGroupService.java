@@ -24,14 +24,16 @@ public class ExpenseGroupService {
     private final ExpenseGroupRepository groupRepository;
     private final GroupExpenseRepository groupExpenseRepository;
     private final ExpenseRepository expenseRepository;
+    private final GroupInvitationRepository groupInvitationRepository;;
     private final InvitationService invitationService;
 
     public ExpenseGroupService(UserRepository userRepository, ExpenseGroupRepository groupRepository, GroupExpenseRepository groupExpenseRepository,
-                               ExpenseRepository expenseRepository, InvitationService invitationService) {
+                               ExpenseRepository expenseRepository, InvitationService invitationService,GroupInvitationRepository groupInvitationRepository) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.groupExpenseRepository = groupExpenseRepository;
         this.expenseRepository = expenseRepository;
+        this.groupInvitationRepository = groupInvitationRepository;
         this.invitationService = invitationService;
     }
 
@@ -48,14 +50,20 @@ public class ExpenseGroupService {
         group.setMembers(members);
         groupRepository.save(group);
 
-        for(User member : userRepository.findAllById(req.memberIds)) {
-            Optional<User> user = userRepository.findById(member.getId());
-            if(user.isEmpty()) {
-                throw new RuntimeException("User Doesn't Exists");
+//        for(User member : userRepository.findAllById(req.memberIds)) {
+//            Optional<User> user = userRepository.findById(member.getId());
+//            if(user.isEmpty()) {
+//                throw new RuntimeException("User Doesn't Exists");
+//            }
+//            invitationService.sendGroupInvitation(group.getId(), user.get().getEmail());
+//        }
+        for(String email : req.memberEmails){
+            User user = userRepository.findByEmail(email);
+            if(Objects.isNull(user)){
+                throw new RuntimeException("User does not exist");
             }
-            invitationService.sendGroupInvitation(group.getId(), user.get().getEmail());
+            invitationService.sendGroupInvitation(group.getId(),email);
         }
-
         return group;
     }
 
@@ -171,8 +179,8 @@ public class ExpenseGroupService {
             }
 
             List<Expense> groupExpenses = expenseRepository.findByGroup_Id(groupId);
-            expenseRepository.deleteAll(groupExpenses);
-
+            List<GroupInvitation> invitations = groupInvitationRepository.findByGroupId(groupId);            expenseRepository.deleteAll(groupExpenses);
+            groupInvitationRepository.deleteAll(invitations);
             groupRepository.deleteById(groupId);
 
             return new ResponseEntity<>("Deleted Group " + group.getName() + " Successfully", HttpStatus.OK);
