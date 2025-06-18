@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "${frontend.url}")
 @RestController
 @RequestMapping("/api/group/invite")
 public class InvitationController {
